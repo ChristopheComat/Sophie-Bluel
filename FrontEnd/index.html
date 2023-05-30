@@ -10,18 +10,38 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
 		rel="stylesheet">
 	<meta name="description" content="">
+	<script src="https://kit.fontawesome.com/ad7acc02bb.js" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="./assets/index.js"></script>
 </head>
 
 <body>
+	<!--Modale-->
+
+	<div id="modal_add" class="modal">
+		<div class="modal_content">
+			<p>Galerie photo</p>
+			<div class="modal_gallery">
+
+			</div>
+			<button>Ajouter une photo</button>
+			<span id="delete-gallery-button">Supprimer la galerie</span>
+			<a href="#" class="modal_close">&times;</a>
+		</div>
+	</div>
 	<header>
+		<section id="connexion-bar" class="connexion-bar">
+			<div class="connect">
+				<span class="flex_row"><i class="fa-regular fa-pen-to-square flex_row"></i> Mode édition</span>
+				<button>Publier les changements</button>
+			</div>
+		</section>
 		<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 		<nav>
 			<ul>
 				<li>projets</li>
 				<li>contact</li>
-				<li><a href="login.html">login</a></li>
+				<li id="login"><a href="login.html">login</a></li>
+				<li id="logout"><a href="#">logout</a></li>
 				<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 			</ul>
 		</nav>
@@ -43,7 +63,11 @@
 			</article>
 		</section>
 		<section id="portfolio">
-			<h2>Mes Projets</h2>
+			<div class="new-title flex_row">
+				<h2>Mes Projets</h2>
+				<span class="edit-text"><i class="fa-regular fa-pen-to-square edit-icon"></i><a
+						href="#modal_add">Modifier</a></span>
+			</div>
 			<section id="category">
 				<!--<ul class="flex_row">
 					<li><button class="first-button">Tous</button></li>
@@ -121,6 +145,7 @@
 			</ul>
 		</nav>
 	</footer>
+	<script src="./assets/index.js"></script>
 </body>
 
 </html>

@@ -10,22 +10,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const email = emailInput.value;
             const password = passwordInput.value;
-            console.log(email);
-            fetch("http://localhost:5678/api/users/login", {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: {
-                    email: email,
-                    password: password,
-                },
-            })
-                .then((response) => response.json())
-                .then((response) => {
-                    console.log("connexion réussie");
-                });
 
+            if (email === "sophie.bluel@test.tld" && password === "S0phie") {
+                console.log("Connexion réussie");
+
+                fetch("http://localhost:5678/api/users/login", {
+                    method: "post",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const token = data.token; // récuperation du token dans l'API
+                        window.localStorage.setItem("token", token);
+                        console.log(token);
+
+                        window.location.href = "index.html";
+                    })
+                    .catch((error) => {
+                        console.log(
+                            "Erreur lors de la requête d'authentification : ",
+                            error
+                        );
+                    });
+            } else {
+                console.log("Échec de connexion");
+                if (errorElement) {
+                    errorElement.textContent =
+                        "Les informations d'identification sont incorrectes.";
+                }
+            }
             // if (email === "sophie.bluel@test.tld" && password === "S0phie") {
             //     // Connexion réussie
             //     console.log("Connexion réussie");
