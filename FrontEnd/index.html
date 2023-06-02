@@ -12,19 +12,44 @@
 	<meta name="description" content="">
 	<script src="https://kit.fontawesome.com/ad7acc02bb.js" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="./assets/index.js"></script>
+	<script src="main.js"></script>
 </head>
 
 <body>
-	<!--Modale-->
+	<!--Modale de suppression-->
 	<div id="modal_add" class="modal">
 		<div class="modal_content">
-			<p>Galerie photo</p>
-			<div class="modal_gallery">
+			<div class="gallery_pic" id="gallery_pic">
+				<p>Galerie photo</p>
+				<div class="modal_gallery">
 
+				</div>
+				<button id="add_pic_button">Ajouter une photo</button>
+				<span id="delete-gallery-button">Supprimer la galerie</span>
 			</div>
-			<button>Ajouter une photo</button>
-			<span id="delete-gallery-button">Supprimer la galerie</span>
+
+			<!--Modale d'ajout-->
+			<div class="add_pic" id="add_pic">
+				<i class="fa-solid fa-arrow-left"></i>
+				<p>Ajout photo</p>
+				<div class="blue_frame">
+					<button class="frame_btn">+ Ajouter photo</button>
+					<span>jpg, png : 4mo max</span>
+				</div>
+				<form action="#" method="post">
+					<label for="titre">Titre</label>
+					<input type="text" name="titre" id="titre">
+					<label for="categorie">Catégorie</label>
+					<select name="categorie" id="categorie">
+						<option value=""></option>
+						<option value="objets">objets</option>
+						<option value="appartement">Appartements</option>
+						<option value="hotels & restaurants">Hôtels & restaurants</option>
+					</select>
+
+				</form>
+				<button>Valider</button>
+			</div>
 			<a href="#" class="modal_close">&times;</a>
 		</div>
 	</div>

@@ -27,6 +27,7 @@ fetch("http://localhost:5678/api/works")
             //Apporter les éléments dynamiquement sur la galerie
             const figureElementGallery = document.createElement("figure");
             figureElementGallery.appendChild(imgElementGallery);
+            figureElementGallery.dataset.category = project.category.id;
 
             //Apporter les éléments dynamiquement sur la modale
             const figureElementModal = document.createElement("figure");
@@ -184,5 +185,22 @@ window.addEventListener("load", function () {
     logoutLink.addEventListener("click", () => {
         localStorage.clear();
         location.reload();
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // récupérer les éléments des modales
+    const galleryPicModal = document.getElementById("gallery_pic");
+    const addPicModal = document.getElementById("add_pic");
+
+    // récupérer le bouton "Ajouter une photo"
+    const addPicButton = document.getElementById("add_pic_button");
+
+    // l'écouteur d'événement au click sur le bouton "Ajouter une photo"
+    addPicButton.addEventListener("click", function () {
+        // Masquer la modale gallery_pic
+        galleryPicModal.style.display = "none";
+        // afficher la modale add_pic
+        addPicModal.style.display = "block";
     });
 });
