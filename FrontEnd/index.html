@@ -30,27 +30,32 @@
 
 			<!--Modale d'ajout-->
 			<div class="add_pic" id="add_pic">
-				<i class="fa-solid fa-arrow-left"></i>
+				<i class="fa-solid fa-arrow-left" id="arrow_left"></i>
 				<p>Ajout photo</p>
 				<div class="blue_frame">
-					<button class="frame_btn">+ Ajouter photo</button>
-					<span>jpg, png : 4mo max</span>
+					<img src="assets/icons/placeholder.png" alt="image par défaut">
+					<!-- <button class="frame_btn">+ Ajouter photo</button> -->
+					<form id="form" action="#">
+						<input class="file_upload" id="image" name="file_upload" type="file" accept=".jpg, .png"
+							title="+ Ajouter photo" />
+						<span>jpg, png : 4mo max</span>
 				</div>
-				<form action="#" method="post">
+				<div class="titre_categ">
 					<label for="titre">Titre</label>
 					<input type="text" name="titre" id="titre">
 					<label for="categorie">Catégorie</label>
 					<select name="categorie" id="categorie">
-						<option value=""></option>
-						<option value="objets">objets</option>
+						<!--<option value=""></option>
+							<option value="objets">Objets</option>
 						<option value="appartement">Appartements</option>
-						<option value="hotels & restaurants">Hôtels & restaurants</option>
+						<option value="hotels & restaurants">Hôtels & restaurants</option>-->
 					</select>
+				</div>
 
 				</form>
-				<button>Valider</button>
+				<button type="submit" id="valid_btn">Valider</button>
 			</div>
-			<a href="#" class="modal_close">&times;</a>
+			<a href="#" class="modal_close" id="modal_close">&times;</a>
 		</div>
 	</div>
 	<header>
@@ -90,7 +95,7 @@
 		<section id="portfolio">
 			<div class="new-title flex_row">
 				<h2>Mes Projets</h2>
-				<span class="edit-text"><i class="fa-regular fa-pen-to-square edit-icon"></i><a
+				<span class="edit-text" id="edit-text"><i class="fa-regular fa-pen-to-square edit-icon"></i><a
 						href="#modal_add">Modifier</a></span>
 			</div>
 			<section id="category">

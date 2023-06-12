@@ -116,6 +116,25 @@ fetch("http://localhost:5678/api/categories")
                 categoryButton.addEventListener("click", () => {
                     filterWorks(category.id);
                 });
+
+                // Ajoutez les options dans la modale
+
+                const selectElementModal = document.getElementById("categorie");
+
+                // Vérifier si les options ont déjà été ajoutées
+                if (selectElementModal.children.length === 0) {
+                    // Ajouter une option vide en premier
+                    const optionElementEmpty = document.createElement("option");
+                    selectElementModal.appendChild(optionElementEmpty);
+
+                    categories.forEach((category) => {
+                        const optionElement = document.createElement("option");
+                        optionElement.value = category.id;
+                        optionElement.textContent = category.name;
+
+                        selectElementModal.appendChild(optionElement);
+                    });
+                }
             });
 
             categorySection.appendChild(categoryList);
@@ -168,17 +187,20 @@ window.addEventListener("load", function () {
     const categorySection = document.getElementById("category");
     const logoutLink = document.getElementById("logout");
     const loginLink = document.getElementById("login");
+    const editTextLink = document.getElementById("edit-text");
 
     if (isTokenExpired(token)) {
         connexionBarSection.style.display = "none";
         categorySection.style.display = "block";
         logoutLink.style.display = "none";
         loginLink.style.display = "block";
+        editTextLink.style.display = "none";
     } else {
         connexionBarSection.style.display = "block";
         categorySection.style.display = "none";
         logoutLink.style.display = "block";
         loginLink.style.display = "none";
+        editTextLink.style.display = "block";
     }
     console.log(localStorage.getItem("token"));
 
@@ -192,15 +214,49 @@ document.addEventListener("DOMContentLoaded", function () {
     // récupérer les éléments des modales
     const galleryPicModal = document.getElementById("gallery_pic");
     const addPicModal = document.getElementById("add_pic");
-
-    // récupérer le bouton "Ajouter une photo"
+    const arrowLeft = document.getElementById("arrow_left");
     const addPicButton = document.getElementById("add_pic_button");
 
     // l'écouteur d'événement au click sur le bouton "Ajouter une photo"
     addPicButton.addEventListener("click", function () {
-        // Masquer la modale gallery_pic
+        // masquer la modale gallery_pic
         galleryPicModal.style.display = "none";
         // afficher la modale add_pic
         addPicModal.style.display = "block";
+    });
+
+    // l'écouteur d'événement au clic sur l'icône "fa-arrow-left"
+    arrowLeft.addEventListener("click", function () {
+        // afficher la modale gallery_pic
+        galleryPicModal.style.display = "block";
+        // masquer la modale add_pic
+        addPicModal.style.display = "none";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const validBtn = document.getElementById("valid_btn");
+
+    validBtn.addEventListener("click", (event) => {
+        const inputTitle = document.getElementById("titre").value;
+        const inputCategorie = document.getElementById("categorie").value;
+        const inputImage = document.getElementById("image").files[0];
+
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append("title", inputTitle);
+        formData.append("category", inputCategorie);
+        formData.append("image", inputImage);
+
+        fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: formData,
+        })
+            .then((response) => response.json())
+            .catch((error) => console.log(error));
     });
 });

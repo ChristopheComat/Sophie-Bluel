@@ -337,7 +337,7 @@ footer nav ul {
     margin: 2em;
 }
 
-/***modal***/
+/***modal de suppression***/
 
 .modal {
     position: fixed;
@@ -443,6 +443,8 @@ footer nav ul {
     cursor: pointer;
 }
 
+/***Modale d'ajout***/
+
 .blue_frame {
     position: absolute;
     right: 17%;
@@ -452,13 +454,6 @@ footer nav ul {
     border-radius: 3px;
     background: #e8f1f6;
     border: 1px solid #e8f1f6;
-}
-
-.blue_frame .frame_btn {
-    background: #cbd6dc;
-    position: absolute;
-    top: 50px;
-    right: 22%;
 }
 
 .blue_frame .frame_btn::before {
@@ -479,15 +474,6 @@ footer nav ul {
     border: none;
 }
 
-.add_pic form {
-    display: flex;
-    flex-direction: column;
-    width: 420px;
-    position: absolute;
-    bottom: 180px;
-    right: 17%;
-}
-
 .add_pic input,
 select {
     height: 51px;
@@ -497,11 +483,61 @@ select {
     box-shadow: 0px 4px 14px 0px #00000017;
 }
 
-label[for="titre"],
-label[for="categorie"] {
-    font-size: 16px;
-    margin-bottom: 10px;
+.titre_categ {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 343px;
+    left: 16%;
+    width: 420px;
+    font-size: 17px;
 }
+
+.file_upload {
+    font-family: "Syne";
+    font-weight: 700;
+
+    border: none;
+    background: #cbd6dc;
+    margin: 2em auto;
+    width: 180px;
+    text-align: center;
+    border-radius: 60px;
+    height: 50px;
+    font-size: 1.2em;
+    position: absolute;
+    top: 62px;
+    left: 28%;
+    cursor: pointer;
+}
+
+.file_upload::before {
+    content: attr(title);
+    color: #306685;
+    padding-left: 15%;
+    padding-right: 22px;
+    line-height: 50px;
+}
+
+#titre,
+#categorie {
+    margin-top: 10px;
+}
+
 .add_pic {
     display: none;
+}
+
+.add_pic i {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.add_pic img {
+    position: absolute;
+    left: 181px;
+    top: 17px;
 }
