@@ -277,6 +277,11 @@ button {
     font-size: 1.2em;
 }
 
+#category button.active {
+    background: #1d6154;
+    color: white;
+}
+
 .gallery {
     width: 100%;
     display: grid;
@@ -514,8 +519,8 @@ select {
 .file_upload::before {
     content: attr(title);
     color: #306685;
-    padding-left: 15%;
-    padding-right: 22px;
+    padding-left: 14%;
+    padding-right: 23px;
     line-height: 50px;
 }
 
@@ -540,4 +545,15 @@ select {
     position: absolute;
     left: 181px;
     top: 17px;
+}
+
+.preview_image {
+    max-width: 420px;
+    max-height: 169px;
+}
+
+#error_message {
+    position: absolute;
+    bottom: 4%;
+    right: 25%;
 }

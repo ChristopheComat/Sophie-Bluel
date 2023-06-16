@@ -1,4 +1,4 @@
-// Récupération des projets pour la modale
+// récupération des projets pour la modale
 fetch("http://localhost:5678/api/works")
     .then((response) => response.json())
     .then((data) => {
@@ -8,7 +8,7 @@ fetch("http://localhost:5678/api/works")
         for (let i = 0; i < data.length; i++) {
             const project = data[i];
 
-            //Création des éléments + les contenus HTML
+            //création des éléments + les contenus HTML
 
             const imgElementModal = document.createElement("img");
             imgElementModal.src = project.imageUrl;
@@ -24,19 +24,19 @@ fetch("http://localhost:5678/api/works")
             const figcaptionElementModal = document.createElement("figcaption");
             figcaptionElementModal.textContent = "Éditer";
 
-            //Apporter les éléments dynamiquement sur la galerie
+            //apporter les éléments dynamiquement sur la galerie
             const figureElementGallery = document.createElement("figure");
             figureElementGallery.appendChild(imgElementGallery);
             figureElementGallery.dataset.category = project.category.id;
 
-            //Apporter les éléments dynamiquement sur la modale
+            //apporter les éléments dynamiquement sur la modale
             const figureElementModal = document.createElement("figure");
             figureElementModal.appendChild(imgElementModal);
             figureElementModal.appendChild(iconElement);
             figureElementModal.appendChild(figcaptionElementModal);
             figureElementModal.dataset.workId = project.id;
 
-            // L'événement de suppression au clic sur l'icône
+            // l'événement de suppression au clic sur l'icône
             iconElement.addEventListener("click", () => {
                 figureElementModal.remove();
                 figureElementGallery.remove();
@@ -59,7 +59,7 @@ fetch("http://localhost:5678/api/works")
                     });
             });
 
-            // Mettre ou non la figcaption dans la galerie
+            // mettre ou non la figcaption dans la galerie
             if (modalGallery === gallery) {
                 figureElementGallery.appendChild(
                     figcaptionElementModal.cloneNode(true)
@@ -83,18 +83,16 @@ fetch("http://localhost:5678/api/works")
     })
     .catch((error) => console.error(error));
 
-// Récupération des catégories depuis l'API
+// récupération des catégories depuis l'API
 fetch("http://localhost:5678/api/categories")
     .then((response) => response.json())
     .then((categories) => {
         const categorySection = document.querySelector("#category");
 
-        // Création des éléments + les contenus HTML
         if (categorySection !== null) {
             const categoryList = document.createElement("ul");
             categoryList.classList.add("flex_row");
 
-            // Le bouton "Tous"
             const allCategoryItem = document.createElement("li");
             const allCategoryButton = document.createElement("button");
             allCategoryButton.textContent = "Tous";
@@ -102,28 +100,25 @@ fetch("http://localhost:5678/api/categories")
             categoryList.appendChild(allCategoryItem);
 
             allCategoryButton.addEventListener("click", () => {
-                filterWorks(0); // Afficher tout les projects
+                filterWorks(0);
+                setActiveButton(allCategoryButton);
             });
 
             categories.forEach((category) => {
                 const categoryItem = document.createElement("li");
                 const categoryButton = document.createElement("button");
                 categoryButton.textContent = category.name;
-                // Apporter les éléments dynamiquement
                 categoryItem.appendChild(categoryButton);
                 categoryList.appendChild(categoryItem);
 
                 categoryButton.addEventListener("click", () => {
                     filterWorks(category.id);
+                    setActiveButton(categoryButton);
                 });
-
-                // Ajoutez les options dans la modale
 
                 const selectElementModal = document.getElementById("categorie");
 
-                // Vérifier si les options ont déjà été ajoutées
                 if (selectElementModal.children.length === 0) {
-                    // Ajouter une option vide en premier
                     const optionElementEmpty = document.createElement("option");
                     selectElementModal.appendChild(optionElementEmpty);
 
@@ -131,7 +126,6 @@ fetch("http://localhost:5678/api/categories")
                         const optionElement = document.createElement("option");
                         optionElement.value = category.id;
                         optionElement.textContent = category.name;
-
                         selectElementModal.appendChild(optionElement);
                     });
                 }
@@ -142,7 +136,18 @@ fetch("http://localhost:5678/api/categories")
     })
     .catch((error) => console.error(error));
 
-// Filtrer les projets en fonction de la catégorie sélectionnée
+function setActiveButton(button) {
+    // supprime la classe active de tous les boutons
+    const buttons = document.querySelectorAll("#category button");
+    buttons.forEach((btn) => {
+        btn.classList.remove("active");
+    });
+
+    // la classe active au bouton cliqué
+    button.classList.add("active");
+}
+
+// filtrer les projets en fonction de la catégorie sélectionnée
 
 function filterWorks(categoryId) {
     const gallery = document.querySelector(".gallery");
@@ -234,8 +239,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//remplir le fomulaire
 document.addEventListener("DOMContentLoaded", function () {
     const validBtn = document.getElementById("valid_btn");
+    const imageInput = document.getElementById("image");
+    const blueFrame = document.querySelector(".blue_frame");
 
     validBtn.addEventListener("click", (event) => {
         const inputTitle = document.getElementById("titre").value;
@@ -243,6 +251,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const inputImage = document.getElementById("image").files[0];
 
         event.preventDefault();
+
+        imageInput.addEventListener("change", (event) => {
+            const selectedImage = event.target.files[0];
+            const imagePreview = document.createElement("img");
+            imagePreview.src = URL.createObjectURL(selectedImage);
+            imagePreview.alt = "Preview Image";
+            imagePreview.classList.add("preview_image");
+        });
 
         const formData = new FormData();
         formData.append("title", inputTitle);
@@ -258,5 +274,19 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then((response) => response.json())
             .catch((error) => console.log(error));
+    });
+});
+
+//preview de l'ajout d'image
+document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("image");
+    const blueFrame = document.querySelector(".blue_frame");
+    const imagePreview = document.createElement("img");
+    imagePreview.classList.add("preview_image");
+    blueFrame.appendChild(imagePreview);
+
+    imageInput.addEventListener("change", function (event) {
+        const selectedImage = event.target.files[0];
+        imagePreview.src = URL.createObjectURL(selectedImage);
     });
 });
