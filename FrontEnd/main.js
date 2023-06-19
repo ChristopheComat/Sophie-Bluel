@@ -1,87 +1,94 @@
-// récupération des projets pour la modale
-fetch("http://localhost:5678/api/works")
-    .then((response) => response.json())
-    .then((data) => {
-        const modalGallery = document.querySelector(".modal_gallery");
-        const gallery = document.querySelector(".gallery");
+const modalGallery = document.querySelector(".modal_gallery");
+const gallery = document.querySelector(".gallery");
 
-        for (let i = 0; i < data.length; i++) {
-            const project = data[i];
+function clearGallery() {
+    modalGallery.innerHTML = "";
+    gallery.innerHTML = "";
+}
 
-            //création des éléments + les contenus HTML
+function displayGallery() {
+    // récupération des projets pour la modale
+    fetch("http://localhost:5678/api/works")
+        .then((response) => response.json())
+        .then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                const project = data[i];
+                //création des éléments + les contenus HTML
 
-            const imgElementModal = document.createElement("img");
-            imgElementModal.src = project.imageUrl;
-            imgElementModal.alt = project.title;
+                const imgElementModal = document.createElement("img");
+                imgElementModal.src = project.imageUrl;
+                imgElementModal.alt = project.title;
 
-            const imgElementGallery = document.createElement("img");
-            imgElementGallery.src = project.imageUrl;
-            imgElementGallery.alt = project.title;
+                const imgElementGallery = document.createElement("img");
+                imgElementGallery.src = project.imageUrl;
+                imgElementGallery.alt = project.title;
 
-            const iconElement = document.createElement("i");
-            iconElement.className = "fa-solid fa-trash-can";
+                const iconElement = document.createElement("i");
+                iconElement.className = "fa-solid fa-trash-can";
 
-            const figcaptionElementModal = document.createElement("figcaption");
-            figcaptionElementModal.textContent = "Éditer";
-
-            //apporter les éléments dynamiquement sur la galerie
-            const figureElementGallery = document.createElement("figure");
-            figureElementGallery.appendChild(imgElementGallery);
-            figureElementGallery.dataset.category = project.category.id;
-
-            //apporter les éléments dynamiquement sur la modale
-            const figureElementModal = document.createElement("figure");
-            figureElementModal.appendChild(imgElementModal);
-            figureElementModal.appendChild(iconElement);
-            figureElementModal.appendChild(figcaptionElementModal);
-            figureElementModal.dataset.workId = project.id;
-
-            // l'événement de suppression au clic sur l'icône
-            iconElement.addEventListener("click", () => {
-                figureElementModal.remove();
-                figureElementGallery.remove();
-                fetch(
-                    "http://localhost:5678/api/works/" +
-                        figureElementModal.dataset.workId,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            Authorization:
-                                "Bearer " + localStorage.getItem("token"),
-                        },
-                    }
-                )
-                    .then((response) => {
-                        console.log("DELETE OK");
-                    })
-                    .catch((error) => {
-                        console.log("erreur :" + error);
-                    });
-            });
-
-            // mettre ou non la figcaption dans la galerie
-            if (modalGallery === gallery) {
-                figureElementGallery.appendChild(
-                    figcaptionElementModal.cloneNode(true)
-                );
-            } else {
-                const figcaptionElementGallery =
+                const figcaptionElementModal =
                     document.createElement("figcaption");
-                figcaptionElementGallery.textContent = project.title;
-                figureElementGallery.appendChild(figcaptionElementGallery);
-            }
+                figcaptionElementModal.textContent = "Éditer";
 
-            if (modalGallery === gallery) {
-                figureElementGallery.addEventListener("click", () => {
-                    figureElementModal.classList.add("appear");
+                //apporter les éléments dynamiquement sur la galerie
+                const figureElementGallery = document.createElement("figure");
+                figureElementGallery.appendChild(imgElementGallery);
+                figureElementGallery.dataset.category = project.category.id;
+
+                //apporter les éléments dynamiquement sur la modale
+                const figureElementModal = document.createElement("figure");
+                figureElementModal.appendChild(imgElementModal);
+                figureElementModal.appendChild(iconElement);
+                figureElementModal.appendChild(figcaptionElementModal);
+                figureElementModal.dataset.workId = project.id;
+
+                // l'événement de suppression au clic sur l'icône
+                iconElement.addEventListener("click", () => {
+                    figureElementModal.remove();
+                    figureElementGallery.remove();
+                    fetch(
+                        "http://localhost:5678/api/works/" +
+                            figureElementModal.dataset.workId,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                Authorization:
+                                    "Bearer " + localStorage.getItem("token"),
+                            },
+                        }
+                    )
+                        .then((response) => {
+                            console.log("DELETE OK");
+                        })
+                        .catch((error) => {
+                            console.log("erreur :" + error);
+                        });
                 });
-            }
 
-            modalGallery.appendChild(figureElementModal);
-            gallery.appendChild(figureElementGallery);
-        }
-    })
-    .catch((error) => console.error(error));
+                // mettre ou non la figcaption dans la galerie
+                if (modalGallery === gallery) {
+                    figureElementGallery.appendChild(
+                        figcaptionElementModal.cloneNode(true)
+                    );
+                } else {
+                    const figcaptionElementGallery =
+                        document.createElement("figcaption");
+                    figcaptionElementGallery.textContent = project.title;
+                    figureElementGallery.appendChild(figcaptionElementGallery);
+                }
+
+                if (modalGallery === gallery) {
+                    figureElementGallery.addEventListener("click", () => {
+                        figureElementModal.classList.add("appear");
+                    });
+                }
+
+                modalGallery.appendChild(figureElementModal);
+                gallery.appendChild(figureElementGallery);
+            }
+        })
+        .catch((error) => console.error(error));
+}
 
 // récupération des catégories depuis l'API
 fetch("http://localhost:5678/api/categories")
@@ -150,7 +157,6 @@ function setActiveButton(button) {
 // filtrer les projets en fonction de la catégorie sélectionnée
 
 function filterWorks(categoryId) {
-    const gallery = document.querySelector(".gallery");
     const figures = gallery.querySelectorAll("figure");
 
     figures.forEach((figure) => {
@@ -213,6 +219,7 @@ window.addEventListener("load", function () {
         localStorage.clear();
         location.reload();
     });
+    displayGallery();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -246,6 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const blueFrame = document.querySelector(".blue_frame");
 
     validBtn.addEventListener("click", (event) => {
+        if (!testFormValidation()) {
+            document.getElementById("error").style.display = "block";
+            return; // si le formulaire n'est pas valide on ne fait rien
+        } else {
+            document.getElementById("error").style.display = "none";
+        }
         const inputTitle = document.getElementById("titre").value;
         const inputCategorie = document.getElementById("categorie").value;
         const inputImage = document.getElementById("image").files[0];
@@ -272,7 +285,12 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: formData,
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    clearGallery();
+                    displayGallery();
+                }
+            })
             .catch((error) => console.log(error));
     });
 });
@@ -288,5 +306,60 @@ document.addEventListener("DOMContentLoaded", function () {
     imageInput.addEventListener("change", function (event) {
         const selectedImage = event.target.files[0];
         imagePreview.src = URL.createObjectURL(selectedImage);
+    });
+});
+
+function testFormValidation() {
+    const inputTitle = document.getElementById("titre").value;
+    const inputCategorie = document.getElementById("categorie").value;
+    const inputImage = document.getElementById("image").files[0];
+    const validBtn = document.getElementById("valid_btn");
+
+    if (inputTitle !== "" && inputCategorie !== "" && inputImage !== "") {
+        validBtn.style.backgroundColor = "#1d6154";
+        return true;
+    } else {
+        return false;
+    }
+}
+
+const inputTitle = document.getElementById("titre");
+const inputCategorie = document.getElementById("categorie");
+const inputImage = document.getElementById("image");
+
+inputTitle.addEventListener("change", function (event) {
+    testFormValidation();
+});
+inputCategorie.addEventListener("change", function (event) {
+    testFormValidation();
+});
+inputImage.addEventListener("change", function (event) {
+    testFormValidation();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Récupérer les éléments de la modale
+    const modalAdd = document.getElementById("modal_add");
+    const editText = document.getElementById("edit-text");
+
+    // Fonction pour ouvrir la modale
+    function openAddModal() {
+        modalAdd.style.display = "block";
+    }
+
+    // Fonction pour fermer la modale
+    function closeAddModal() {
+        modalAdd.style.display = "none";
+    }
+
+    // Ajouter un écouteur d'événement au clic sur l'élément "edit-text" pour ouvrir la modale
+    editText.addEventListener("click", openAddModal);
+
+    // Ajouter un écouteur d'événement au clic en dehors de la modale pour la fermer
+    window.addEventListener("click", function (event) {
+        // Vérifier si l'élément cliqué est en dehors de la modale
+        if (event.target === modalAdd) {
+            closeAddModal();
+        }
     });
 });

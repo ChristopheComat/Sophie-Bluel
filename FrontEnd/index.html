@@ -12,13 +12,13 @@
 	<meta name="description" content="">
 	<script src="https://kit.fontawesome.com/ad7acc02bb.js" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="main.js"></script>
+	<script src="main.js" defer></script>
 </head>
 
 <body>
 	<!--Modale de suppression-->
 	<div id="modal_add" class="modal">
-		<div class="modal_content">
+		<div class="modal_content" id="modal_content">
 			<div class="gallery_pic" id="gallery_pic">
 				<p>Galerie photo</p>
 				<div class="modal_gallery">
@@ -56,7 +56,7 @@
 					</form>
 				</div>
 
-
+				<p class="error" id="error">Veuillez remplir tout les champs</p>
 				<button type="submit" id="valid_btn">Valider</button>
 
 			</div>

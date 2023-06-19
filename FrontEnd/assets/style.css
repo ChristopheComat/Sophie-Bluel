@@ -552,8 +552,8 @@ select {
     max-height: 169px;
 }
 
-#error_message {
-    position: absolute;
-    bottom: 4%;
-    right: 25%;
+#error {
+    font-size: 15px;
+    color: #d65353;
+    padding-top: 20px;
 }
