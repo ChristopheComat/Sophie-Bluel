@@ -219,13 +219,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // masquer la modale gallery_pic
         galleryPicModal.style.display = "none";
         // afficher la modale add_pic
-        addPicModal.style.display = "block";
+        addPicModal.style.display = "flex";
+        addPicModal.style.justifyContent = "center";
     });
 
     // l'écouteur d'événement au clic sur l'icône "fa-arrow-left"
     arrowLeft.addEventListener("click", function () {
         // afficher la modale gallery_pic
-        galleryPicModal.style.display = "block";
+        galleryPicModal.style.display = "flex";
         // masquer la modale add_pic
         addPicModal.style.display = "none";
     });
@@ -250,18 +251,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         event.preventDefault();
 
-        imageInput.addEventListener("change", (event) => {
-            const selectedImage = event.target.files[0];
-            const imagePreview = document.createElement("img");
-            imagePreview.src = URL.createObjectURL(selectedImage);
-            imagePreview.alt = "Preview Image";
-            imagePreview.classList.add("preview_image");
-
-            blueFrame.innerHTML = ""; // supprime le contenu précédent du cadre
-
-            blueFrame.appendChild(imagePreview); // ajoute l'image de prévisualisation dans le cadre
-        });
-
         const formData = new FormData();
         formData.append("title", inputTitle);
         formData.append("category", inputCategorie);
@@ -284,20 +273,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-//preview de l'ajout d'image
-document.addEventListener("DOMContentLoaded", function () {
-    const imageInput = document.getElementById("image");
-    const blueFrame = document.querySelector(".blue_frame");
-    const imagePreview = document.createElement("img");
-    imagePreview.classList.add("preview_image");
-    blueFrame.appendChild(imagePreview);
-
-    imageInput.addEventListener("change", function (event) {
-        const selectedImage = event.target.files[0];
-        imagePreview.src = URL.createObjectURL(selectedImage);
-    });
-});
-
 function testFormValidation() {
     const inputTitle = document.getElementById("titre").value;
     const inputCategorie = document.getElementById("categorie").value;
@@ -311,6 +286,21 @@ function testFormValidation() {
         return false;
     }
 }
+
+const imageInput = document.getElementById("image");
+imageInput.addEventListener("change", function (event) {
+    const imagePreview = document.querySelector("#preview_image");
+    const selectedImage = event.target.files[0];
+    imagePreview.src = URL.createObjectURL(selectedImage);
+    imagePreview.alt = "Preview Image";
+
+
+    const spanAddImage = document.querySelector("#add_pic > div.blue_frame > div > span");
+    const inputAddImage = event.target;
+    spanAddImage.style.display = "none";
+    inputAddImage.style.display = "none";
+
+});
 
 const inputTitle = document.getElementById("titre");
 const inputCategorie = document.getElementById("categorie");
@@ -333,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fonction pour ouvrir la modale
     function openAddModal() {
-        modalAdd.style.display = "block";
+        modalAdd.style.display = "flex";
     }
 
     // Fonction pour fermer la modale
