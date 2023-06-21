@@ -7,48 +7,47 @@ function clearGallery() {
 }
 
 function displayGallery() {
-    // récupération des projets pour la modale
+    // Récupération des projets pour la modale
     fetch("http://localhost:5678/api/works")
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const project = data[i];
-                //création des éléments + les contenus HTML
 
+                // Création des éléments + les contenus HTML
                 const imgElementModal = document.createElement("img");
                 imgElementModal.src = project.imageUrl;
                 imgElementModal.alt = project.title;
 
-                const imgElementGallery = document.createElement("img");
-                imgElementGallery.src = project.imageUrl;
-                imgElementGallery.alt = project.title;
-
-                const iconElement = document.createElement("i");
-                iconElement.className = "fa-solid fa-trash-can";
-
-                const figcaptionElementModal =
-                    document.createElement("figcaption");
-                figcaptionElementModal.textContent = "Éditer";
-
-                //apporter les éléments dynamiquement sur la galerie
-                const figureElementGallery = document.createElement("figure");
-                figureElementGallery.appendChild(imgElementGallery);
-                figureElementGallery.dataset.category = project.category.id;
-
-                //apporter les éléments dynamiquement sur la modale
                 const figureElementModal = document.createElement("figure");
                 figureElementModal.appendChild(imgElementModal);
-                figureElementModal.appendChild(iconElement);
-                figureElementModal.appendChild(figcaptionElementModal);
                 figureElementModal.dataset.workId = project.id;
 
-                // l'événement de suppression au clic sur l'icône
-                iconElement.addEventListener("click", () => {
+                // Ajouter l'icône "fa-arrows-up-down-left-right" à la première image de la modale
+                if (i === 0) {
+                    const iconArrowsElement = document.createElement("i");
+                    iconArrowsElement.className =
+                        "fa-solid fa-arrows-up-down-left-right arrows-icon";
+                    figureElementModal.appendChild(iconArrowsElement);
+                }
+
+                const iconTrashElement = document.createElement("i");
+                iconTrashElement.className = "fa-solid fa-trash-can trash-icon";
+                figureElementModal.appendChild(iconTrashElement);
+
+                // L'événement de suppression au clic sur l'icône "fa-trash-can"
+                iconTrashElement.addEventListener("click", () => {
                     figureElementModal.remove();
-                    figureElementGallery.remove();
+                    // Supprimer l'image correspondante dans la galerie
+                    const figureElementGallery = document.querySelector(
+                        `[data-category="${project.category.id}"]`
+                    );
+                    if (figureElementGallery) {
+                        figureElementGallery.remove();
+                    }
+                    // Effectuer l'appel API pour supprimer le projet
                     fetch(
-                        "http://localhost:5678/api/works/" +
-                            figureElementModal.dataset.workId,
+                        `http://localhost:5678/api/works/${figureElementModal.dataset.workId}`,
                         {
                             method: "DELETE",
                             headers: {
@@ -65,23 +64,9 @@ function displayGallery() {
                         });
                 });
 
-                // mettre ou non la figcaption dans la galerie
-                if (modalGallery === gallery) {
-                    figureElementGallery.appendChild(
-                        figcaptionElementModal.cloneNode(true)
-                    );
-                } else {
-                    const figcaptionElementGallery =
-                        document.createElement("figcaption");
-                    figcaptionElementGallery.textContent = project.title;
-                    figureElementGallery.appendChild(figcaptionElementGallery);
-                }
-
-                if (modalGallery === gallery) {
-                    figureElementGallery.addEventListener("click", () => {
-                        figureElementModal.classList.add("appear");
-                    });
-                }
+                const figureElementGallery = document.createElement("figure");
+                figureElementGallery.appendChild(imgElementModal.cloneNode());
+                figureElementGallery.dataset.category = project.category.id;
 
                 modalGallery.appendChild(figureElementModal);
                 gallery.appendChild(figureElementGallery);
@@ -271,6 +256,10 @@ document.addEventListener("DOMContentLoaded", function () {
             imagePreview.src = URL.createObjectURL(selectedImage);
             imagePreview.alt = "Preview Image";
             imagePreview.classList.add("preview_image");
+
+            blueFrame.innerHTML = ""; // supprime le contenu précédent du cadre
+
+            blueFrame.appendChild(imagePreview); // ajoute l'image de prévisualisation dans le cadre
         });
 
         const formData = new FormData();
