@@ -2,28 +2,37 @@ const modalGallery = document.querySelector(".modal_gallery");
 const gallery = document.querySelector(".gallery");
 
 function clearGallery() {
-    modalGallery.innerHTML = "";
-    gallery.innerHTML = "";
+    modalGallery.innerHTML = ""; // éffacer le HTML de l'élément avec la classe "modal_gallery"
+    gallery.innerHTML = ""; // éffacer HTML de l'élément avec la classe "gallery"
 }
 
+// récupération des projets depuis l'API et affichage dans la galerie
 function displayGallery() {
-    // Récupération des projets pour la modale
+    // récupération des projets pour la modale
     fetch("http://localhost:5678/api/works")
-        .then((response) => response.json())
+        .then((response) => response.json()) //convertion de la réponse en JSON
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const project = data[i];
 
-                // Création des éléments + les contenus HTML
+                // création des éléments HTML pour les projets dans la galerie modale
+
+                //création des éléments <img> pour afficher l'image du projet
                 const imgElementModal = document.createElement("img");
                 imgElementModal.src = project.imageUrl;
                 imgElementModal.alt = project.title;
 
+                // création des éléments <figure>
                 const figureElementModal = document.createElement("figure");
                 figureElementModal.appendChild(imgElementModal);
                 figureElementModal.dataset.workId = project.id;
 
-                // Ajouter l'icône "fa-arrows-up-down-left-right" à la première image de la modale
+                // création des éléments <figcaption> pour afficher le texte "éditer" sous l'image modale
+                const figureCaptionModal = document.createElement("figcaption");
+                figureCaptionModal.innerText = "éditer";
+                figureElementModal.appendChild(figureCaptionModal);
+
+                // l'ajout l'icône "fa-arrows-up-down-left-right" à la première image de la modale
                 if (i === 0) {
                     const iconArrowsElement = document.createElement("i");
                     iconArrowsElement.className =
@@ -31,21 +40,23 @@ function displayGallery() {
                     figureElementModal.appendChild(iconArrowsElement);
                 }
 
+                // créer un élément <i> pour l'icône "fa-trash-can" de suppression d'un projet
                 const iconTrashElement = document.createElement("i");
                 iconTrashElement.className = "fa-solid fa-trash-can trash-icon";
                 figureElementModal.appendChild(iconTrashElement);
 
-                // L'événement de suppression au clic sur l'icône "fa-trash-can"
+                // l'événement de suppression au clic sur l'icône "fa-trash-can"
                 iconTrashElement.addEventListener("click", () => {
                     figureElementModal.remove();
-                    // Supprimer l'image correspondante dans la galerie
+                    // supprimer l'image correspondante dans la galerie
                     const figureElementGallery = document.querySelector(
-                        `[data-category="${project.category.id}"]`
+                        `[data-work-id="${project.id}"]`
                     );
+
                     if (figureElementGallery) {
                         figureElementGallery.remove();
                     }
-                    // Effectuer l'appel API pour supprimer le projet
+                    // l'appel API pour supprimer le projet
                     fetch(
                         `http://localhost:5678/api/works/${figureElementModal.dataset.workId}`,
                         {
@@ -63,11 +74,18 @@ function displayGallery() {
                             console.log("erreur :" + error);
                         });
                 });
-
+                // création des éléments <figure> pour afficher l'image dans la galerie
                 const figureElementGallery = document.createElement("figure");
                 figureElementGallery.appendChild(imgElementModal.cloneNode());
                 figureElementGallery.dataset.category = project.category.id;
+                figureElementGallery.dataset.workId = project.id;
 
+                // création des éléments <figcaption> pour afficher le titre du projet sous l'image dans la galerie
+                const figureCaption = document.createElement("figcaption");
+                figureCaption.innerText = project.title;
+                figureElementGallery.appendChild(figureCaption);
+
+                // l'ajout des éléments <figure> dans la galerie
                 modalGallery.appendChild(figureElementModal);
                 gallery.appendChild(figureElementGallery);
             }
@@ -77,7 +95,7 @@ function displayGallery() {
 
 // récupération des catégories depuis l'API
 fetch("http://localhost:5678/api/categories")
-    .then((response) => response.json())
+    .then((response) => response.json()) // convertion de la réponse en JSON
     .then((categories) => {
         const categorySection = document.querySelector("#category");
 
@@ -85,18 +103,22 @@ fetch("http://localhost:5678/api/categories")
             const categoryList = document.createElement("ul");
             categoryList.classList.add("flex_row");
 
+            // l'ajout d'un bouton pour la catégorie "Tous"
             const allCategoryItem = document.createElement("li");
             const allCategoryButton = document.createElement("button");
             allCategoryButton.textContent = "Tous";
             allCategoryItem.appendChild(allCategoryButton);
             categoryList.appendChild(allCategoryItem);
 
+            // l'ajout d'un écouteur d'événement pour filtrer tous les projets lors du clic sur "Tous"
             allCategoryButton.addEventListener("click", () => {
                 filterWorks(0);
                 setActiveButton(allCategoryButton);
             });
 
+            // les catégories récupérées depuis l'API
             categories.forEach((category) => {
+                // créer un élément <li> pour chaque catégorie
                 const categoryItem = document.createElement("li");
                 const categoryButton = document.createElement("button");
                 categoryButton.textContent = category.name;
@@ -108,12 +130,15 @@ fetch("http://localhost:5678/api/categories")
                     setActiveButton(categoryButton);
                 });
 
+                // l'ajout des options de catégorie
                 const selectElementModal = document.getElementById("categorie");
 
                 if (selectElementModal.children.length === 0) {
+                    // l'ajout d'une option vide au début
                     const optionElementEmpty = document.createElement("option");
                     selectElementModal.appendChild(optionElementEmpty);
 
+                    // parcourir les catégories pour ajouter chaque option de la liste
                     categories.forEach((category) => {
                         const optionElement = document.createElement("option");
                         optionElement.value = category.id;
@@ -123,6 +148,7 @@ fetch("http://localhost:5678/api/categories")
                 }
             });
 
+            // l'ajout de la liste des catégories du HTML
             categorySection.appendChild(categoryList);
         }
     })
@@ -147,9 +173,9 @@ function filterWorks(categoryId) {
     figures.forEach((figure) => {
         const category = parseInt(figure.dataset.category);
         if (categoryId === 0 || category === categoryId) {
-            figure.style.display = "block"; // Les afficher
+            figure.style.display = "block"; // les afficher
         } else {
-            figure.style.display = "none"; // Les masquer
+            figure.style.display = "none"; // les masquer
         }
     });
 }
@@ -177,8 +203,9 @@ function isTokenExpired(token) {
     return expired; // si la date de maintenant est plus haute que l'exp alors on renvoi true
 }
 
+//le changement de la page principale quand c'est connecté et déconnecté
 window.addEventListener("load", function () {
-    const token = window.localStorage.getItem("token");
+    const token = window.localStorage.getItem("token"); //le token stoké dans le local storage
     const connexionBarSection = document.getElementById("connexion-bar");
     const categorySection = document.getElementById("category");
     const logoutLink = document.getElementById("logout");
@@ -214,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const arrowLeft = document.getElementById("arrow_left");
     const addPicButton = document.getElementById("add_pic_button");
 
-    // l'écouteur d'événement au click sur le bouton "Ajouter une photo"
+    // l'événement au click sur le bouton "Ajouter une photo"
     addPicButton.addEventListener("click", function () {
         // masquer la modale gallery_pic
         galleryPicModal.style.display = "none";
@@ -223,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
         addPicModal.style.justifyContent = "center";
     });
 
-    // l'écouteur d'événement au clic sur l'icône "fa-arrow-left"
+    // l'événement au clic sur l'icône "fa-arrow-left"
     arrowLeft.addEventListener("click", function () {
         // afficher la modale gallery_pic
         galleryPicModal.style.display = "flex";
@@ -232,12 +259,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-//remplir le fomulaire
+//remplir le fomulaire pour ajouter un projet
+
 document.addEventListener("DOMContentLoaded", function () {
+    // récupération des éléments du formulaire
     const validBtn = document.getElementById("valid_btn");
     const imageInput = document.getElementById("image");
     const blueFrame = document.querySelector(".blue_frame");
 
+    // l'événement au bouton de validation du formulaire
     validBtn.addEventListener("click", (event) => {
         if (!testFormValidation()) {
             document.getElementById("error").style.display = "block";
@@ -245,17 +275,21 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             document.getElementById("error").style.display = "none";
         }
+
+        // récupération des valeurs saisies de l'utilisateur
         const inputTitle = document.getElementById("titre").value;
         const inputCategorie = document.getElementById("categorie").value;
         const inputImage = document.getElementById("image").files[0];
 
         event.preventDefault();
 
+        // création d'un objet FormData pour envoyer les données du formulaire
         const formData = new FormData();
         formData.append("title", inputTitle);
         formData.append("category", inputCategorie);
         formData.append("image", inputImage);
 
+        // la requête POST vers l'API pour ajouter le travail à la galerie
         fetch("http://localhost:5678/api/works", {
             method: "POST",
             headers: {
@@ -265,14 +299,15 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then((response) => {
                 if (response.ok) {
-                    clearGallery();
-                    displayGallery();
+                    clearGallery(); // effacer la galerie existante
+                    displayGallery(); // Afficher la nouvelle galerie
                 }
             })
             .catch((error) => console.log(error));
     });
 });
 
+// fonction pour vérifier la validation du formulaire
 function testFormValidation() {
     const inputTitle = document.getElementById("titre").value;
     const inputCategorie = document.getElementById("categorie").value;
@@ -280,63 +315,65 @@ function testFormValidation() {
     const validBtn = document.getElementById("valid_btn");
 
     if (inputTitle !== "" && inputCategorie !== "" && inputImage !== "") {
-        validBtn.style.backgroundColor = "#1d6154";
+        validBtn.style.backgroundColor = "#1d6154"; // changement de couleur du bouton si le formulaire est valide
         return true;
     } else {
         return false;
     }
 }
 
+// l'événement pour la sélection d'une image
 const imageInput = document.getElementById("image");
 imageInput.addEventListener("change", function (event) {
     const imagePreview = document.querySelector("#preview_image");
     const selectedImage = event.target.files[0];
-    imagePreview.src = URL.createObjectURL(selectedImage);
-    imagePreview.alt = "Preview Image";
+    imagePreview.src = URL.createObjectURL(selectedImage); // afficher l'image qu'on veut ajouter
 
-
-    const spanAddImage = document.querySelector("#add_pic > div.blue_frame > div > span");
+    const spanAddImage = document.querySelector(
+        "#add_pic > div.blue_frame > div > span"
+    );
     const inputAddImage = event.target;
-    spanAddImage.style.display = "none";
-    inputAddImage.style.display = "none";
-
+    spanAddImage.style.display = "none"; // cacher le message Ajouter une image
+    inputAddImage.style.display = "none"; // cacher le bouton de sélection d'image
 });
 
+// l'événement pour vérifier les champs rempli
 const inputTitle = document.getElementById("titre");
 const inputCategorie = document.getElementById("categorie");
 const inputImage = document.getElementById("image");
 
 inputTitle.addEventListener("change", function (event) {
-    testFormValidation();
+    testFormValidation(); // voir la validation du formulaire quand le champ du titre est rempli
 });
 inputCategorie.addEventListener("change", function (event) {
-    testFormValidation();
+    testFormValidation(); // voir la validation du formulaire quand le champ de la catégorie est rempli
 });
 inputImage.addEventListener("change", function (event) {
-    testFormValidation();
+    testFormValidation(); // voir la validation du formulaire quand le champ de l'image est rempli
 });
 
+//la modale se ferme si il y a un click en dehors de la modale
 document.addEventListener("DOMContentLoaded", function () {
-    // Récupérer les éléments de la modale
+    // récupérer les éléments de la modale
     const modalAdd = document.getElementById("modal_add");
     const editText = document.getElementById("edit-text");
 
-    // Fonction pour ouvrir la modale
+    // fonction pour ouvrir la modale
     function openAddModal() {
         modalAdd.style.display = "flex";
     }
 
-    // Fonction pour fermer la modale
+    //fonction pour fermer la modale
     function closeAddModal() {
         modalAdd.style.display = "none";
     }
 
-    // Ajouter un écouteur d'événement au clic sur l'élément "edit-text" pour ouvrir la modale
+    // l'ajout d'un écouteur d'événement au clic sur l'élément "edit-text" pour ouvrir la modale
     editText.addEventListener("click", openAddModal);
 
-    // Ajouter un écouteur d'événement au clic en dehors de la modale pour la fermer
+    // l'ajout d'un écouteur d'événement au clic en dehors de la modale pour la fermer
     window.addEventListener("click", function (event) {
-        // Vérifier si l'élément cliqué est en dehors de la modale
+        // vérifier si l'élément cliqué est en dehors de la modale
         if (event.target === modalAdd) {
             closeAddModal();
         }
