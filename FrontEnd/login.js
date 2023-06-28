@@ -16,54 +16,40 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = passwordInput.value;
 
             // vérification des informations d'identification correctes
-            if (email === "sophie.bluel@test.tld" && password === "S0phie") {
-                console.log("Connexion réussie");
-
-                // effectuer une requête POST vers l'API pour l'authentification
-                fetch("http://localhost:5678/api/users/login", {
-                    method: "post",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
+            // effectuer une requête POST vers l'API pour l'authentification
+            fetch("http://localhost:5678/api/users/login", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.error) {
+                        // Si la requete renvoi une erreur
+                        throw new Error(); // Genere une erreur pour tomber dans le .catch de la promesse.
+                    } else {
+                        console.log("Connexion réussie");
                         const token = data.token; // récuperation du token dans l'API
                         window.localStorage.setItem("token", token); // stocker le token dans le local storage
                         console.log(token);
 
                         // basculement vers la page "index.html"
                         window.location.href = "index.html";
-                    })
-                    .catch((error) => {
-                        console.log(
-                            "Erreur lors de la requête d'authentification : ",
-                            error
-                        );
-                    });
-            } else {
-                console.log("Échec de connexion");
-                if (errorElement) {
+                    }
+                })
+                .catch((error) => {
+                    console.log(
+                        "Erreur lors de la requête d'authentification : ",
+                        error
+                    );
                     errorElement.textContent =
                         "Les informations d'identification sont incorrectes.";
-                }
-            }
-            // if (email === "sophie.bluel@test.tld" && password === "S0phie") {
-            //     // Connexion réussie
-            //     console.log("Connexion réussie");
-            // } else {
-            //     // échec de connexion
-            //     console.log("échec de connexion");
-            //     // Message d'erreur affiché
-            //     if (errorElement) {
-            //         errorElement.textContent =
-            //             "Les informations d'identification sont incorrectes.";
-            //     }
-            // }
+                });
         });
     }
 });

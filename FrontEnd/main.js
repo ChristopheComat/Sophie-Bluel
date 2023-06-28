@@ -171,7 +171,7 @@ function filterWorks(categoryId) {
     const figures = gallery.querySelectorAll("figure");
 
     figures.forEach((figure) => {
-        const category = parseInt(figure.dataset.category);
+        const category = parseInt(figure.dataset.category); // obtenir la catégorie associée à chaque élément <figure>
         if (categoryId === 0 || category === categoryId) {
             figure.style.display = "block"; // les afficher
         } else {
@@ -181,7 +181,7 @@ function filterWorks(categoryId) {
 }
 
 function isTokenExpired(token) {
-    if (token == null) {
+    if (token == null || token == undefined) {
         // si il n'y pas de token
         return true; // on renvoi qu'il est "expiré"
     }
